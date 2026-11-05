@@ -1,0 +1,14 @@
+{
+  "name": "cpi-resource-studio",
+  "version": "0.5.1",
+  "private": true,
+  "description": "Development checks for CPI Resource Studio Chrome extension",
+  "scripts": {
+    "test": "node tests/popup.cjs && node tests/collection.cjs && node tests/converter.cjs",
+    "package": "python3 scripts/package.py"
+  },
+  "devDependencies": {
+    "@xmldom/xmldom": "0.9.12"
+  },
+  "license": "MIT"
+}

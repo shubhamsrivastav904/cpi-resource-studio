@@ -1,0 +1,10 @@
+<observations>
+  <reading station="NIMBUS-42">
+    <temperature>18.6</temperature>
+    <active>true</active>
+  </reading>
+  <reading station="ORBIT-7">
+    <temperature>-3.2</temperature>
+    <active>false</active>
+  </reading>
+</observations>
