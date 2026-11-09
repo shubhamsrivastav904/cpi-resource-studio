@@ -1,4 +1,4 @@
-# CPI Resource Studio · 0.5.1 Public Beta
+# CPI Resource Studio · 0.6.1 Public Beta
 
 An independent Chrome extension for SAP Cloud Integration. Browse local flow resources in one workspace, edit them, compare two files side by side, and generate named XSD resources from sample XML.
 
@@ -13,7 +13,7 @@ An independent Chrome extension for SAP Cloud Integration. Browse local flow res
 The ZIP is shareable for manual installation. It is not a Chrome Web Store listing and cannot be installed by clicking the ZIP. Managed browsers may require administrator approval. No developer mode is required once a store-reviewed version becomes available.
 
 ## Tenant access
-No tenant hostname is hard-coded. Activation requires HTTPS, an integration-flow route and a loaded SAPUI5 page. Access is granted temporarily to the active tab when you invoke the extension. There are no permanent host permissions, all-sites background scripts, account setup or API keys. After a full refresh, click the extension icon again. In-app navigation within the same tenant retains the workspace.
+No tenant hostname is hard-coded. Activation requires HTTPS and a loaded SAPUI5 page. The resource editor opens on integration-flow routes; inventory also opens on Design and Monitor pages. Access is granted temporarily to the active tab when you invoke the extension. There are no permanent host permissions, all-sites background scripts, account setup or API keys. After a full refresh, click the extension icon again. In-app navigation within the same tenant retains the workspace.
 
 ## Resource Editor
 Opens native References → Local and reads supported XSD, WSDL, Groovy, JavaScript, XML and XSL/XSLT resource links. Select a resource in the sidebar or use previous/next. Single editor is the default; Compare side by side adds another pane. This is visual side-by-side comparison, not a highlighted diff.
@@ -39,3 +39,11 @@ The v0.4.1 editing/upload core was live-verified on one tenant and a copied flow
 See privacy.html. No telemetry, analytics, external AI service or publisher backend is bundled. Conversion is local. Saving sends resource content to your current SAP tenant; Copy uses the clipboard and Download/Open use local files. Support: shubhamsrivastav.904@gmail.com. For a published version, general feedback can also be left in its store reviews/comments. Do not post tenant URLs, credentials, customer schemas or confidential payloads.
 
 SAP and SAP Integration Suite are trademarks of SAP SE. This independent extension is not affiliated with or endorsed by SAP. No SAP logos are included.
+
+## Interface inventory
+
+On Design or Monitor, click the extension icon and choose Deployed flow inventory. Scan deployed flows to list all deployed integration flows, including those missing system headers. Package names are shown and interfaces are ordered by package, then interface name.
+
+Source and target systems are read from constant message headers named SAP_Sender and SAP_Receiver in the deployed archives. Missing, repeated, dynamic and conflicting assignments are flagged; scripts and runtime routing are not evaluated. The scan is read-only and has a Cancel option.
+
+Select Export… and choose Excel (.xlsx) or CSV. Check the fields to include, then download. All scanned interfaces are included even while a search is active. Excel has a frozen header, column filters and UTC date cells. Uncheck Runtime status or Deployed on to omit them. Package ID and Scanned on are optional fields. The selection lasts until the tenant tab closes or reloads.

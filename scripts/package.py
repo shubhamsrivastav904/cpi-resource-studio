@@ -9,7 +9,7 @@ source = root / 'extension'
 manifest = json.loads((source / 'manifest.json').read_text())
 assert manifest['permissions'] == ['activeTab', 'scripting']
 assert 'host_permissions' not in manifest
-for name in ['collection.js', 'xml-to-xsd.js', 'popup.js']:
+for name in ['collection.js', 'xml-to-xsd.js', 'popup.js', 'inventory-core.js', 'inventory-export.js', 'inventory.js']:
     subprocess.run(['node', '--check', str(source / name)], check=True)
 output = root / 'dist'
 output.mkdir(exist_ok=True)

@@ -2,7 +2,7 @@
 
 An independent Chrome extension for SAP Cloud Integration. Read, edit and compare flow resources in the tenant page, and generate XSD resources from sample XML.
 
-**Version 0.5.1 · Public beta · Chrome Web Store review pending**
+**Version 0.6.1 · Public beta**
 
 ![Compare fictional sensor schemas](docs/images/01-resource-comparison.png)
 
@@ -13,6 +13,7 @@ An independent Chrome extension for SAP Cloud Integration. Read, edit and compar
 - Start with one editor; open a second pane for side-by-side comparison.
 - Save through CPI's existing signed-in interface and show persistent success/error messages.
 - Convert XML to XSD locally, choose a filename, save it to the current flow and refresh the resource list.
+- Scan deployed flow archives for SAP_Sender and SAP_Receiver headers, search the inventory and export selected fields to Excel or CSV.
 
 Side-by-side comparison is not a highlighted diff. Full XML-against-XSD validation and XSD-to-XML generation are not included.
 
@@ -25,6 +26,14 @@ Side-by-side comparison is not a highlighted diff. Full XML-against-XSD validati
 5. Pin **CPI Resource Studio**. Open a signed-in iFlow, click the extension icon, then **Open workspace**.
 
 The extension activates only on the tab you select. After a full refresh, activate it again. Managed browsers may require administrator approval. This repository does not bypass organization policies.
+
+## Deployed flow inventory
+
+Open a signed-in Design or Monitor page, activate the extension and select **Deployed flow inventory**. Select **Scan deployed flows**. This reads the deployed archives through CPI’s native monitoring operations; no flow is modified or deployed. The table lists package, flow name, ID, sender, receiver, version, status, deployment date and review notes. Interfaces are sorted by package and then interface name, including natural numeric ordering. Select **Export…**, choose Excel (.xlsx) or CSV, and check only the fields to include. Every scanned row is exported, even when a search filter is active. The selection is retained while the tenant tab remains open. At least one field must be selected. Excel output includes column filters, a frozen header, text-safe identifiers and UTC date cells.
+
+Only the exact message-header names `SAP_Sender` and `SAP_Receiver` are mapped. Missing, externalized, dynamic, empty, deleted and conflicting assignments are flagged. Multiple assignments do not establish which value a particular execution uses. Headers assigned in scripts are not evaluated. The inventory describes configured constants, not observed message traffic.
+
+Archive identity and version are checked, and the deployed list is read again to detect changes during the scan. A cancelled or failed scan retains partial rows. Operations are sequential, have a 30-second request deadline and a 32 MB response/archive-entry limit. Native monitoring endpoints may change with SAP updates or require additional read permissions. See [preview validation](docs/INVENTORY-PREVIEW.md).
 
 ## XML → XSD
 
@@ -46,13 +55,13 @@ See the [user guide](docs/USER-GUIDE.md) for details and limitations.
 
 ## Privacy
 
-Permissions: `activeTab` and `scripting`. No persistent host access, telemetry, external AI service, remote conversion service or publisher backend is bundled. Conversion runs locally; user-requested saves send resources to the current SAP tenant. Copy/Download/Open use the clipboard and local files. Code executes in the tenant's page environment to interact with its native editor, so it is not isolated from that page's scripts.
+Permissions: `activeTab` and `scripting`. No persistent host access, telemetry, external AI service, remote conversion service or publisher backend is bundled. Conversion runs locally; user-requested saves send resources to the current SAP tenant. Copy/Download/Open and inventory export use the clipboard and local files. Code executes in the tenant's page environment to interact with its native editor, so it is not isolated from that page's scripts.
 
 [Privacy policy](https://cpi-resource-studio-privacy.shubhamsrivast244635.chatgpt.site) · [Packaged policy](extension/privacy.html)
 
 ## Development
 
-Node.js 18+ and Python 3 are used for development only. The extension itself has no npm/runtime dependencies.
+Node.js 24+ and Python 3 are used for development only. The extension itself has no npm/runtime dependencies.
 
 ```sh
 npm ci
@@ -60,7 +69,7 @@ npm test
 npm run package
 ```
 
-Packaging creates `dist/cpi-resource-studio-v0.5.1.zip` and a SHA-256 checksum. Automated checks cover converter edge cases, popup access gating and simulated CPI discovery/edit/save/upload behavior. Live tenant checks are documented separately; automated mocks do not certify every tenant.
+Packaging creates `dist/cpi-resource-studio-v0.6.1.zip` and a SHA-256 checksum. Automated checks cover converter edge cases, popup access gating and simulated CPI discovery/edit/save/upload behavior. Live tenant checks are documented separately; automated mocks do not certify every tenant.
 
 ## Feedback
 

@@ -1,11 +1,22 @@
 {
   "manifest_version": 3,
   "name": "CPI Resource Studio",
-  "version": "0.5.1",
-  "version_name": "0.5.1 Public Beta",
+  "version": "0.6.1",
+  "version_name": "0.6.1 Public Beta",
   "minimum_chrome_version": "111",
   "description": "Browse, compare and edit SAP Cloud Integration resources. Generate XSD from XML and save it to your current integration flow.",
-  "permissions": ["activeTab", "scripting"],
-  "action": {"default_title": "Open CPI Resource Studio", "default_popup": "popup.html"},
-  "icons": {"16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png"}
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_title": "Open CPI Resource Studio",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
 }
