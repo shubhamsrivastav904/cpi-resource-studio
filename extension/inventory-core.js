@@ -2,7 +2,11 @@
   'use strict';
   const LIMIT = 32 * 1024 * 1024;
   const BPMN = 'http://www.omg.org/spec/BPMN/20100524/MODEL';
-  const names = ['SAP_Sender', 'SAP_Receiver'];
+  const headerGroups = [
+    {key:'sender', label:'Source system', aliases:['SAP_Sender','Sender']},
+    {key:'receiver', label:'Target system', aliases:['SAP_Receiver','Receiver']}
+  ];
+  const names = headerGroups.flatMap(group=>group.aliases);
   function xml(text) {
     if (/<!DOCTYPE|<!ENTITY/i.test(text)) throw Error('Unsupported XML declaration.');
     const doc = new DOMParser().parseFromString(text, 'application/xml');
@@ -30,16 +34,19 @@
       }
     }
     const result = {sender: '', receiver: '', issues: []};
-    for (const [index, name] of names.entries()) {
-      const assignments = found[name];
-      const values = [...new Set(assignments.filter(a => /^create$/i.test(a.action) && /^constant$/i.test(a.type) && a.value.trim() && !/\{\{|\$\{/.test(a.value)).map(a => a.value.trim()))];
-      result[index === 0 ? 'sender' : 'receiver'] = values.join(' | ');
-      if (!assignments.length) result.issues.push(name + ' missing');
-      if (assignments.some(a => !/^create$/i.test(a.action))) result.issues.push(name + ' deleted or unsupported action');
-      if (assignments.some(a => !/^constant$/i.test(a.type) || /\{\{|\$\{/.test(a.value))) result.issues.push(name + ' dynamic or externalized');
-      if (assignments.some(a => !a.value.trim())) result.issues.push(name + ' empty');
-      if (values.length > 1) result.issues.push(name + ' has conflicting values');
-      if (assignments.length > 1) result.issues.push(name + ' assigned in multiple steps');
+    for (const group of headerGroups) {
+      const assignments=group.aliases.flatMap(name=>found[name]);
+      const values=[...new Set(assignments.filter(a=>/^create$/i.test(a.action) && /^constant$/i.test(a.type) && a.value.trim() && !/\{\{|\$\{/.test(a.value)).map(a=>a.value.trim()))];
+      result[group.key]=values.join(' | ');
+      if(!assignments.length) result.issues.push(group.label+' header missing ('+group.aliases.join(' or ')+')');
+      if(values.length>1) result.issues.push(group.label+' has conflicting values ('+group.aliases.join(' / ')+')');
+      for(const name of group.aliases) {
+        const entries=found[name];
+        if(entries.some(a=>!/^create$/i.test(a.action))) result.issues.push(name+' deleted or unsupported action');
+        if(entries.some(a=>!/^constant$/i.test(a.type) || /\{\{|\$\{/.test(a.value))) result.issues.push(name+' dynamic or externalized');
+        if(entries.some(a=>!a.value.trim())) result.issues.push(name+' empty');
+        if(entries.length>1) result.issues.push(name+' assigned in multiple steps');
+      }
     }
     return result;
   }

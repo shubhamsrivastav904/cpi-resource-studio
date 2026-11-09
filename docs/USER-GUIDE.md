@@ -1,4 +1,4 @@
-# CPI Resource Studio · 0.6.1 Public Beta
+# CPI Resource Studio · 0.6.2 Public Beta
 
 An independent Chrome extension for SAP Cloud Integration. Browse local flow resources in one workspace, edit them, compare two files side by side, and generate named XSD resources from sample XML.
 
@@ -44,6 +44,6 @@ SAP and SAP Integration Suite are trademarks of SAP SE. This independent extensi
 
 On Design or Monitor, click the extension icon and choose Deployed flow inventory. Scan deployed flows to list all deployed integration flows, including those missing system headers. Package names are shown and interfaces are ordered by package, then interface name.
 
-Source and target systems are read from constant message headers named SAP_Sender and SAP_Receiver in the deployed archives. Missing, repeated, dynamic and conflicting assignments are flagged; scripts and runtime routing are not evaluated. The scan is read-only and has a Cancel option.
+Source and target systems are read from constant message headers named SAP_Sender or Sender for source, and SAP_Receiver or Receiver for target in the deployed archives. Matching values across both aliases are shown once. Different alias values are flagged as conflicts. Missing, repeated, dynamic and conflicting assignments are flagged; scripts and runtime routing are not evaluated. The scan is read-only and has a Cancel option.
 
 Select Export… and choose Excel (.xlsx) or CSV. Check the fields to include, then download. All scanned interfaces are included even while a search is active. Excel has a frozen header, column filters and UTC date cells. Uncheck Runtime status or Deployed on to omit them. Package ID and Scanned on are optional fields. The selection lasts until the tenant tab closes or reloads.

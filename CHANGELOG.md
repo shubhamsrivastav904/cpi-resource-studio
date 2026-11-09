@@ -1,3 +1,9 @@
+# 0.6.2 — Sender and receiver header aliases
+
+- Source accepts SAP_Sender or Sender; target accepts SAP_Receiver or Receiver.
+- Matching alias values are shown once; different values are flagged as conflicts.
+- Dynamic, empty, deleted and repeated assignments remain flagged.
+
 # 0.6.1 — Package ordering and configurable export
 
 - Added package names and grouped interface ordering by package, then interface name.

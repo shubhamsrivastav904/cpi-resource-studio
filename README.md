@@ -2,7 +2,7 @@
 
 An independent Chrome extension for SAP Cloud Integration. Read, edit and compare flow resources in the tenant page, and generate XSD resources from sample XML.
 
-**Version 0.6.1 · Public beta**
+**Version 0.6.2 · Public beta**
 
 ![Compare fictional sensor schemas](docs/images/01-resource-comparison.png)
 
@@ -13,7 +13,7 @@ An independent Chrome extension for SAP Cloud Integration. Read, edit and compar
 - Start with one editor; open a second pane for side-by-side comparison.
 - Save through CPI's existing signed-in interface and show persistent success/error messages.
 - Convert XML to XSD locally, choose a filename, save it to the current flow and refresh the resource list.
-- Scan deployed flow archives for SAP_Sender and SAP_Receiver headers, search the inventory and export selected fields to Excel or CSV.
+- Scan deployed flow archives for sender and receiver headers, search the inventory and export selected fields to Excel or CSV.
 
 Side-by-side comparison is not a highlighted diff. Full XML-against-XSD validation and XSD-to-XML generation are not included.
 
@@ -31,7 +31,7 @@ The extension activates only on the tab you select. After a full refresh, activa
 
 Open a signed-in Design or Monitor page, activate the extension and select **Deployed flow inventory**. Select **Scan deployed flows**. This reads the deployed archives through CPI’s native monitoring operations; no flow is modified or deployed. The table lists package, flow name, ID, sender, receiver, version, status, deployment date and review notes. Interfaces are sorted by package and then interface name, including natural numeric ordering. Select **Export…**, choose Excel (.xlsx) or CSV, and check only the fields to include. Every scanned row is exported, even when a search filter is active. The selection is retained while the tenant tab remains open. At least one field must be selected. Excel output includes column filters, a frozen header, text-safe identifiers and UTC date cells.
 
-Only the exact message-header names `SAP_Sender` and `SAP_Receiver` are mapped. Missing, externalized, dynamic, empty, deleted and conflicting assignments are flagged. Multiple assignments do not establish which value a particular execution uses. Headers assigned in scripts are not evaluated. The inventory describes configured constants, not observed message traffic.
+Source accepts `SAP_Sender` or `Sender`; target accepts `SAP_Receiver` or `Receiver` (exact, case-sensitive names). Matching values across aliases are shown once. Different constant values across aliases are flagged as conflicts. Missing, externalized, dynamic, empty, deleted and conflicting assignments are flagged. Multiple assignments do not establish which value a particular execution uses. Headers assigned in scripts are not evaluated. The inventory describes configured constants, not observed message traffic.
 
 Archive identity and version are checked, and the deployed list is read again to detect changes during the scan. A cancelled or failed scan retains partial rows. Operations are sequential, have a 30-second request deadline and a 32 MB response/archive-entry limit. Native monitoring endpoints may change with SAP updates or require additional read permissions. See [preview validation](docs/INVENTORY-PREVIEW.md).
 
@@ -69,7 +69,7 @@ npm test
 npm run package
 ```
 
-Packaging creates `dist/cpi-resource-studio-v0.6.1.zip` and a SHA-256 checksum. Automated checks cover converter edge cases, popup access gating and simulated CPI discovery/edit/save/upload behavior. Live tenant checks are documented separately; automated mocks do not certify every tenant.
+Packaging creates `dist/cpi-resource-studio-v0.6.2.zip` and a SHA-256 checksum. Automated checks cover converter edge cases, popup access gating and simulated CPI discovery/edit/save/upload behavior. Live tenant checks are documented separately; automated mocks do not certify every tenant.
 
 ## Feedback
 

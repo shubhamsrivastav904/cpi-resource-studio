@@ -24,6 +24,22 @@ const download=(bytes,id='uuid-test')=>`<com.sap.it.nm.commands.deploy.DownloadC
 function mock({mismatch=false,race=false,denied=false,wrongId=false}={}){let scans=0;const calls=[];return {calls,fetcher:async(url,options)=>{calls.push(url);assert.equal(options.method,'GET');assert.equal(options.credentials,'same-origin');assert.equal(new URL(url).origin,origin);if(denied)return new Response('',{status:403});if(url.includes('IntegrationComponentsListCommand')){scans++;return new Response(list(race&&scans>1?'2.0.0':'1.2.3'));}assert.match(url,/DownloadContentCommand/);assert.equal(new URL(url).searchParams.get('tenantId'),'tenant');return new Response(download(zip(xml,8,mismatch?'Bundle-SymbolicName: Test\r\nBundle-Version: 9.0.0\r\n':undefined),wrongId?'other':undefined));}};}
 (async()=>{
  const h=api.headers(xml);assert.equal(h.sender,'ERP');assert.equal(h.receiver,'Warehouse');assert.equal(h.issues.length,0);assert(!JSON.stringify(h).includes('DO-NOT-EXPORT'));
+ for(const source of ['SAP_Sender','Sender'])for(const target of ['SAP_Receiver','Receiver']) {
+   const aliases=api.headers(flow(assignment(source,'ERP')+assignment(target,'Warehouse')));
+   assert.equal(aliases.sender,'ERP');assert.equal(aliases.receiver,'Warehouse');assert.equal(aliases.issues.length,0);
+ }
+ const same=api.headers(flow(assignment('SAP_Sender','ERP')+assignment('Sender',' ERP ')+assignment('SAP_Receiver','Warehouse')+assignment('Receiver','Warehouse')));
+ assert.equal(same.sender,'ERP');assert.equal(same.receiver,'Warehouse');assert.equal(same.issues.length,0);
+ const conflicts=api.headers(flow(assignment('SAP_Sender','ERP')+assignment('Sender','Other ERP')+assignment('SAP_Receiver','Warehouse')+assignment('Receiver','Other warehouse')));
+ assert.equal(conflicts.sender,'ERP | Other ERP');assert.equal(conflicts.receiver,'Warehouse | Other warehouse');assert.equal(conflicts.issues.filter(issue=>issue.includes('conflicting')).length,2);
+ const mixed=api.headers(flow(assignment('SAP_Sender','ERP')+assignment('Sender','${header.source}','expression')+assignment('Receiver','Warehouse')));
+ assert.equal(mixed.sender,'ERP');assert.match(mixed.issues.join(';'),/Sender dynamic/);
+ const deleted=api.headers(flow(assignment('Sender','ERP')+assignment('SAP_Sender','','constant','Delete')+assignment('Receiver','Warehouse')));
+ assert.match(deleted.issues.join(';'),/SAP_Sender deleted/);
+ const missing=api.headers(flow(''));assert.equal(missing.issues.length,2);assert.match(missing.issues[0],/SAP_Sender or Sender/);
+ const repeated=api.headers(flow(assignment('Sender','ERP')+assignment('Sender','ERP')+assignment('Receiver','Warehouse')));
+ assert.equal(repeated.sender,'ERP');assert.match(repeated.issues.join(';'),/Sender assigned in multiple steps/);
+ const wrongCase=api.headers(flow(assignment('sender','ERP')+assignment('receiver','Warehouse')));assert.equal(wrongCase.issues.length,2);
  const issues=api.headers(flow(assignment('SAP_Sender','A')+assignment('SAP_Sender','B')+assignment('SAP_Receiver','{{target}}')));assert.match(issues.issues.join(';'),/conflicting/);assert.match(issues.issues.join(';'),/externalized/);assert.equal(issues.receiver,'');
  assert.throws(()=>api.headers('<!DOCTYPE a><a/>'));assert.throws(()=>api.headers('<root/>'));assert.throws(()=>api.headers('<broken>'));
  for(const method of [0,8])assert.equal(await api.flowFromZip(zip(xml,method)),xml);
