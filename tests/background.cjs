@@ -1,0 +1,10 @@
+const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
+const listeners=[],calls=[];let created=0;const c={URL,chrome:{runtime:{id:'studio',onMessage:{addListener:fn=>listeners.push(fn)},sendMessage:async msg=>{calls.push(msg);return {text:'Router: RT_{purpose}_{index}'}}},offscreen:{hasDocument:async()=>created>0,createDocument:async()=>{created++}},scripting:{executeScript:async x=>{calls.push(x);return [{result:true}]}}}};
+vm.runInNewContext(fs.readFileSync('extension/background.js','utf8'),c);
+const sender={id:'studio',frameId:0,url:'https://demo.hana.ondemand.com/shell/design/integrationflows/Fictional_copy',tab:{id:8}};
+function send(msg,s=sender){return new Promise(resolve=>{let handled=false;for(const fn of listeners){if(fn(msg,s,resolve)===true)handled=true;}if(!handled)setImmediate(()=>resolve(undefined));});}
+(async()=>{let r=await send({kind:'openStudioTool',tool:'naming'});assert.equal(r.ok,true);assert(calls.some(x=>x.files?.includes('naming-documents.js')));assert(calls.filter(x=>x.target).every(x=>x.target.tabId===8));calls.length=0;
+for(const url of ['https://demo.hana.ondemand.com/login','https://evil.example/shell/design','https://nothana.ondemand.com/shell/design','http://demo.hana.ondemand.com/shell/design']){r=await send({kind:'openStudioTool',tool:'naming'},{...sender,url});assert(r.error);}
+assert.equal(calls.length,0);r=await send({kind:'openStudioTool',tool:'naming'},{...sender,frameId:1});assert(r.error);r=await send({kind:'openStudioTool',tool:'other'});assert(r.error);
+r=await send({kind:'readRulesDocument',format:'pdf',data:'JVBERi0='});assert.match(r.text,/Router/);assert.equal(created,1);r=await send({kind:'readRulesDocument',format:'docx',data:'UEs='});assert.equal(created,1);r=await send({kind:'readRulesDocument',format:'exe',data:'a'});assert(r.error);
+console.log('PASS: automatic tool routing, exact tab, tenant/path/frame guards, fixed injection files, and local offscreen reader reuse');})();

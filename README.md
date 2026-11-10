@@ -2,7 +2,7 @@
 
 An independent Chrome extension for SAP Cloud Integration. Read, edit and compare flow resources in the tenant page, and generate XSD resources from sample XML.
 
-**Version 0.6.2 · Public beta**
+**Version 1.1.0 Naming Preview**
 
 ![Compare fictional sensor schemas](docs/images/01-resource-comparison.png)
 
@@ -33,7 +33,7 @@ Open a signed-in Design or Monitor page, activate the extension and select **Dep
 
 Source accepts `SAP_Sender` or `Sender`; target accepts `SAP_Receiver` or `Receiver` (exact, case-sensitive names). Matching values across aliases are shown once. Different constant values across aliases are flagged as conflicts. Missing, externalized, dynamic, empty, deleted and conflicting assignments are flagged. Multiple assignments do not establish which value a particular execution uses. Headers assigned in scripts are not evaluated. The inventory describes configured constants, not observed message traffic.
 
-Archive identity and version are checked, and the deployed list is read again to detect changes during the scan. A cancelled or failed scan retains partial rows. Operations are sequential, have a 30-second request deadline and a 32 MB response/archive-entry limit. Native monitoring endpoints may change with SAP updates or require additional read permissions. See [preview validation](docs/INVENTORY-PREVIEW.md).
+Archive identity and version are checked, and the deployed list is read again to detect changes during the scan. A cancelled or failed scan retains partial rows. Operations are sequential, have a 30-second request deadline and a 32 MB response/archive-entry limit. Native monitoring endpoints may change with SAP updates or require additional read permissions. See [release validation](docs/RELEASE-VALIDATION.md).
 
 ## XML → XSD
 
@@ -49,7 +49,7 @@ Save also persists other pending flow changes, just as native CPI Save does. Not
 
 ## Compatibility
 
-Chrome 111+ and supported desktop English SAP Cloud Integration designer pages over HTTPS. There is no hard-coded tenant allowlist. Compatibility still depends on SAPUI5/Ace controls, routing and permissions. Other tenants, localized/legacy designers and future SAP changes require further testing. The editing/upload core was live-verified on one copied flow; the public toolbar activation has automated simulated-API coverage, not a universal compatibility certification.
+Chrome 120+ and supported desktop English SAP Cloud Integration designer pages over HTTPS. There is no hard-coded tenant allowlist. Compatibility still depends on SAPUI5/Ace controls, routing and permissions. Other tenants, localized/legacy designers and future SAP changes require further testing. The editing/upload core was live-verified on one copied flow; the public toolbar activation has automated simulated-API coverage, not a universal compatibility certification.
 
 See the [user guide](docs/USER-GUIDE.md) for details and limitations.
 
@@ -69,7 +69,7 @@ npm test
 npm run package
 ```
 
-Packaging creates `dist/cpi-resource-studio-v0.6.2.zip` and a SHA-256 checksum. Automated checks cover converter edge cases, popup access gating and simulated CPI discovery/edit/save/upload behavior. Live tenant checks are documented separately; automated mocks do not certify every tenant.
+Packaging creates `dist/cpi-resource-studio-v1.1.0 Naming Preview.zip` and a SHA-256 checksum. Automated checks cover converter edge cases, popup access gating and simulated CPI discovery/edit/save/upload behavior. Live tenant checks are documented separately; automated mocks do not certify every tenant.
 
 ## Feedback
 
@@ -80,3 +80,15 @@ SAP and SAP Integration Suite are trademarks of SAP SE. This project is independ
 ## License
 
 [MIT](LICENSE). Third-party trademarks remain with their owners. The XML parser dependency is used only in development tests and is not bundled into the extension.
+
+
+## Step naming review preview
+
+Review names directly from the open CPI designer, edit and select suggestions, then apply them through native CPI fields. Save through CPI to persist the draft. SAP-based defaults and shareable project rules are included. See [preview scope and validation](docs/NAMING-PREVIEW.md). This build is a local preview and has not been submitted to the Store.
+
+
+## Automatic launcher and document guidelines
+
+The 1.1 preview shows a draggable, collapsible launcher automatically on supported SAP-hosted CPI Design/Monitor pages after site access is enabled. It offers Resource Editor, XML → XSD, Flow Inventory and Naming Review. Chrome grants host access at site level; runtime checks restrict operation to CPI routes and the loaded SAP interface. Launcher position/collapse preferences are stored locally on the site. Custom tenant domains continue to support manual popup activation; automatic custom-domain registration is not included.
+
+Upload JSON rules, text-based PDFs or Word .docx guidelines. PDF.js is bundled (Apache-2.0 license included); documents are processed in a local extension offscreen page. Explicit patterns and prefixes are proposed for confirmation and can be edited per step type. Free-form business instructions are not silently interpreted as enforceable rules. Scanned PDFs need OCR first; encrypted PDFs and legacy .doc files must be converted. Documents are limited to 10 MB, 100 PDF pages and 200,000 extracted characters. Nothing is sent to a publisher service or AI API. Existing project rules stay active until the reviewed document rules are accepted.

@@ -1,4 +1,4 @@
-# CPI Resource Studio · 0.6.2 Public Beta
+# CPI Resource Studio · 1.0.0
 
 An independent Chrome extension for SAP Cloud Integration. Browse local flow resources in one workspace, edit them, compare two files side by side, and generate named XSD resources from sample XML.
 

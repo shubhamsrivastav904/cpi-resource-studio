@@ -7,9 +7,10 @@ import subprocess
 root = Path(__file__).resolve().parents[1]
 source = root / 'extension'
 manifest = json.loads((source / 'manifest.json').read_text())
-assert manifest['permissions'] == ['activeTab', 'scripting']
-assert 'host_permissions' not in manifest
-for name in ['collection.js', 'xml-to-xsd.js', 'popup.js', 'inventory-core.js', 'inventory-export.js', 'inventory.js']:
+assert manifest['permissions'] == ['activeTab', 'scripting', 'offscreen']
+assert manifest['host_permissions'] == ['https://*.hana.ondemand.com/shell/*', 'https://*.hana.ondemand.cloud/shell/*', 'https://*.platform.sapcloud.cn/shell/*']
+assert '<all_urls>' not in manifest['host_permissions']
+for name in ['collection.js', 'xml-to-xsd.js', 'popup.js', 'inventory-core.js', 'inventory-export.js', 'inventory.js', 'naming-core.js', 'naming.js', 'naming-live.js','background.js','document-bridge.js','launcher.js','naming-documents.js','document-text.js','document-reader.mjs']:
     subprocess.run(['node', '--check', str(source / name)], check=True)
 output = root / 'dist'
 output.mkdir(exist_ok=True)

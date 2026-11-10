@@ -1,13 +1,14 @@
 {
   "manifest_version": 3,
   "name": "CPI Resource Studio",
-  "version": "0.6.2",
-  "version_name": "0.6.2 Public Beta",
-  "minimum_chrome_version": "111",
+  "version": "1.1.0",
+  "version_name": "1.1.0 Naming Preview",
+  "minimum_chrome_version": "120",
   "description": "Browse, compare and edit SAP Cloud Integration resources. Generate XSD from XML and save it to your current integration flow.",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "offscreen"
   ],
   "action": {
     "default_title": "Open CPI Resource Studio",
@@ -18,5 +19,27 @@
     "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.hana.ondemand.com/shell/*",
+        "https://*.hana.ondemand.cloud/shell/*",
+        "https://*.platform.sapcloud.cn/shell/*"
+      ],
+      "js": [
+        "document-bridge.js",
+        "launcher.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "host_permissions": [
+    "https://*.hana.ondemand.com/shell/*",
+    "https://*.hana.ondemand.cloud/shell/*",
+    "https://*.platform.sapcloud.cn/shell/*"
+  ]
 }

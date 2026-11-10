@@ -17,7 +17,7 @@ async function initialize(){
     const flow=url.pathname.match(/\/integrationflows\/([^/]+)/)[1];
     document.getElementById('flow').textContent=decodeURIComponent(flow);
     status.textContent='Opens inside this tenant tab. Saves use your existing CPI permissions.';
-    openButton.disabled=false;
+    openButton.disabled=false;document.getElementById("naming").disabled=false;
   }catch(error){fail(error.message);}
 }
 openButton.addEventListener('click',async()=>{
@@ -25,7 +25,7 @@ openButton.addEventListener('click',async()=>{
   try{
     const [{result:ready}]=await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'MAIN',func:()=>Boolean(window.sap?.ui?.getCore&&document.querySelector('.sapUiBody')&&/\/integrationflows\/[^/]+/.test(location.pathname))});
     if(!ready)throw Error('CPI is still loading or this page is unsupported. Wait for the flow designer to load and try again.');
-    await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'MAIN',files:['xml-to-xsd.js','collection.js','inventory-core.js','inventory-export.js','inventory.js']});
+    await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'MAIN',files:['xml-to-xsd.js','collection.js','inventory-core.js','inventory-export.js','inventory.js','naming-core.js','naming-documents.js','naming-live.js','naming.js']});
     const [{result:opened}]=await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'MAIN',func:()=>{const launch=document.getElementById('cpi-resource-collection')?.shadowRoot?.getElementById('launch');if(!launch)return false;launch.click();return true;}});
     if(!opened)throw Error('The workspace could not open. Refresh the tenant page after saving any native CPI work, then try again.');
     status.textContent='Workspace opened in your tenant tab.';window.close();
@@ -47,3 +47,15 @@ inventoryButton.addEventListener('click',async()=>{
   }catch(error){fail(error.message);inventoryButton.disabled=false;}
 });
 initialize();
+
+document.getElementById('naming').addEventListener('click',async()=>{
+ const button=document.getElementById('naming');button.disabled=true;
+ try{
+ const [{result:ready}]=await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'MAIN',func:()=>Boolean(window.sap?.ui?.getCore&&document.querySelector('.sapUiBody')&&/\/integrationflows\/[^/]+/.test(location.pathname))});
+ if(!ready)throw Error('Open a loaded CPI flow designer first.');
+ await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'ISOLATED',files:['document-bridge.js']});
+ await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'MAIN',files:['inventory-core.js','naming-core.js','naming-documents.js','naming-live.js','naming.js']});
+ const [{result:opened}]=await chrome.scripting.executeScript({target:{tabId:selectedTab.id},world:'MAIN',func:()=>{const panel=document.getElementById('cpi-naming-review')?.shadowRoot?.querySelector('section');if(!panel)return false;panel.hidden=false;return true;}});
+ if(!opened)throw Error('Naming review could not open.');window.close();
+ }catch(e){fail(e.message);button.disabled=false;}
+});

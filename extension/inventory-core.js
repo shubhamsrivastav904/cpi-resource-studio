@@ -222,5 +222,5 @@
     };
     return '\ufeff'+[fields.map(field=>escape(field.label)).join(','),...sortedRows(rows).map(row=>fields.map(field=>escape(row[field.key])).join(','))].join('\r\n');
   }
-  window.CpiInventory=Object.freeze({headers,flowFromZip,deployedList,downloadBytes,deployedHeaders,collect,csv,exportFields,defaultFields,sortedRows,chosenFields});
+  window.CpiInventory=Object.freeze({headers,zipText,flowFromZip,deployedList,downloadBytes,deployedHeaders,collect,csv,exportFields,defaultFields,sortedRows,chosenFields});
 })();
