@@ -13,8 +13,9 @@ chrome.runtime.onMessage.addListener((msg,sender,reply)=>{
 });
 chrome.runtime.onMessage.addListener((msg,sender,reply)=>{
  if(msg?.kind!=='openStudioTool')return;
- if(sender.id!==chrome.runtime.id||sender.frameId!==0||!sender.tab?.id||!isTenant(sender.url)||!['resources','converter','inventory','naming'].includes(msg.tool)){reply({error:'Open a supported CPI tenant page.'});return;}
+ if(sender.id!==chrome.runtime.id||sender.frameId!==0||!sender.tab?.id||!isTenant(sender.url)||!['resources','converter','inventory','naming','help'].includes(msg.tool)){reply({error:'Open a supported CPI tenant page.'});return;}
  (async()=>{
+  if(msg.tool==='help'){await chrome.tabs.create({url:chrome.runtime.getURL('help.html')});return {ok:true};}
   const target={tabId:sender.tab.id};
   const [{result:ready}]=await chrome.scripting.executeScript({target,world:'MAIN',func:()=>Boolean(window.sap?.ui?.getCore&&document.querySelector('.sapUiBody')&&/^\/shell\/(design|monitoring)(\/|$)/.test(location.pathname))});
   if(!ready)throw Error('CPI is still loading. Try again when the designer is ready.');

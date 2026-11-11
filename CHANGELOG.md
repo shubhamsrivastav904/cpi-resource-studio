@@ -1,5 +1,7 @@
 # 1.1.0 Naming Preview
 
+Help & About: bundled quick guides, release notes, feedback and project links; accessible from the popup and tenant toolbar without added permissions.
+
 - Added automatic, draggable tenant launcher with local collapse/position preferences.
 - Added local PDF/Word .docx guideline extraction and mandatory review of proposed naming patterns.
 - Added SAP-hosted site permissions and a local offscreen document reader; no remote document service.
